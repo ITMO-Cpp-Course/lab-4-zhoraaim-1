@@ -22,7 +22,7 @@ target_link_libraries(resource_tests
 )
 
 if (TARGET project_sanitizers)
-        target_link_libraries(resource_tests PRIVATE project_sanitizers)
+    target_link_libraries(resource_tests PRIVATE project_sanitizers)
 endif ()
 
 

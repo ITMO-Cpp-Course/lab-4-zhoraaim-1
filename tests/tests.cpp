@@ -1,29 +1,32 @@
+#include "resource_core.h"
 #include <catch2/catch_all.hpp>
 #include <fstream>
 #include <string>
-#include "resource_core.h"
 
-namespace {
-void createTestFile(const std::string& path, const std::string& content = ":)") {
+namespace
+{
+void createTestFile(const std::string& path, const std::string& content = ":)")
+{
     std::ofstream out(path);
     out << content;
 }
 
-void removeTestFile(const std::string& path) {
+void removeTestFile(const std::string& path)
+{
     std::remove(path.c_str());
 }
-}
+} // namespace
 
 TEST_CASE("std::runtime_error")
 {
-    REQUIRE_THROWS_AS(
-        throw lab4::resource_core::ResourceError("test message"),
-        lab4::resource_core::ResourceError
-    );
+    REQUIRE_THROWS_AS(throw lab4::resource_core::ResourceError("test message"), lab4::resource_core::ResourceError);
 
-    try {
+    try
+    {
         throw lab4::resource_core::ResourceError("custom error");
-    } catch (const std::runtime_error& e) {
+    }
+    catch (const std::runtime_error& e)
+    {
         REQUIRE(std::string(e.what()) == "custom error");
     }
 }
@@ -65,7 +68,7 @@ TEST_CASE("FileHandle: auto-close ")
     {
         lab4::resource_core::FileHandle fh(test_file);
         REQUIRE(fh.isOpen() == true);
-    }//деструктор
+    } // деструктор
 
     // После выхода из поля объект уничтожен
     lab4::resource_core::FileHandle fh2(test_file);
@@ -108,10 +111,7 @@ TEST_CASE("FileHandle: open fail")
 {
     lab4::resource_core::FileHandle fh;
 
-    REQUIRE_THROWS_AS(
-        fh.open("nonexistent_12345.txt"),
-        lab4::resource_core::ResourceError
-    );
+    REQUIRE_THROWS_AS(fh.open("nonexistent_12345.txt"), lab4::resource_core::ResourceError);
     REQUIRE(fh.isOpen() == false);
 }
 TEST_CASE("FileHandle: move constructor")
@@ -188,7 +188,6 @@ TEST_CASE("ResourceManager: out of scope weak_ptr")
     {
         auto fh = manager.caching(test_file);
         REQUIRE((*fh).isOpen() == true);
-
     }
 
     REQUIRE(manager.sizeCache() == 1);
