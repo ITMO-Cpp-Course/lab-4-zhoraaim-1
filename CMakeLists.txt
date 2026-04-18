@@ -28,15 +28,20 @@ else ()
     )
 endif ()
 
+# Enable testing (CTest already implies enable_testing(), but keeping it is safe)
 include(CTest)
 enable_testing()
 
 # AddressSanitizer (ASan) as an interface target
-# Sanitizers are not supported on Windows (neither MSVC nor MinGW)
+# INTERFACE libraries only propagate flags, they DO NOT have source files
 if (ENABLE_SANITIZERS AND NOT WIN32)
     add_library(project_sanitizers INTERFACE)
-    target_compile_options(project_sanitizers INTERFACE $<$<CONFIG:Debug>:-fsanitize=address -fno-omit-frame-pointer>)
-    target_link_options(project_sanitizers INTERFACE    $<$<CONFIG:Debug>:-fsanitize=address>)
+    target_compile_options(project_sanitizers INTERFACE
+            $<$<CONFIG:Debug>:-fsanitize=address -fno-omit-frame-pointer>
+    )
+    target_link_options(project_sanitizers INTERFACE
+            $<$<CONFIG:Debug>:-fsanitize=address>
+    )
 endif ()
 
 add_subdirectory(src/resource_core)
